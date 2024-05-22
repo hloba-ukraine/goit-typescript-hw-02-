@@ -2,10 +2,12 @@ import SearchBar from "./SearchBar/SearchBar";
 import ImageGallery from "./ImageGallery/ImageGallery";
 import ErrorMessage from "./ErrorMessage/ErrorMessage";
 import { useEffect, useState, FormEvent } from "react";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import LoadMoreBtn from "./LoadMoreBtn/LoadMoreBtn";
 import Loader from "./Loader/Loader";
 import ImageModal from "./ImageModal/ImageModal";
+
+import Probability from "./try";
 interface data {
   id: string;
   urls: {
@@ -39,12 +41,13 @@ export default function App() {
     const fetchPhotos = async (): Promise<void> => {
       try {
         setLoader(true);
-        const { data } = await instance.get(
+        const response: AxiosResponse<{ results: data[] }> = await instance.get(
           `/photos/?client_id=${API_KEY}&query=${query}`,
           {
             params: options,
           }
         );
+        const { data } = response;
 
         const img: data[] = data.results;
         console.log(img);
@@ -99,6 +102,7 @@ export default function App() {
         onCloseModal={onClose}
         image={regularSrc}
       />
+      <Probability probability="" />
     </>
   );
 }
