@@ -2,13 +2,17 @@
 
 import toast, { Toaster } from "react-hot-toast";
 import { Form, Formik, Field } from "formik";
-export default function SearchBar({ handleSearch }) {
+import { FormEvent } from "react";
+interface SearchBarProps {
+  handleSearch: (q: string) => void;
+}
+const SearchBar: React.FC<SearchBarProps> = ({ handleSearch }) => {
   const notify = () => toast("Please enter the search criteria");
   const initialValues = {
     searchTerm: "",
   };
 
-  const handleSubmit = (values) => {
+  const handleSubmit = (values: typeof initialValues) => {
     if (!values.searchTerm) {
       notify();
       return;
@@ -36,4 +40,5 @@ export default function SearchBar({ handleSearch }) {
       </Formik>
     </header>
   );
-}
+};
+export default SearchBar;

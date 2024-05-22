@@ -1,20 +1,28 @@
 import SearchBar from "./SearchBar/SearchBar";
 import ImageGallery from "./ImageGallery/ImageGallery";
-import ErrorMessage from "../components/ErrorMessage/ErrorMessage";
-import { useEffect, useState } from "react";
+import ErrorMessage from "./ErrorMessage/ErrorMessage";
+import { useEffect, useState, FormEvent } from "react";
 import axios from "axios";
 import LoadMoreBtn from "./LoadMoreBtn/LoadMoreBtn";
 import Loader from "./Loader/Loader";
 import ImageModal from "./ImageModal/ImageModal";
+interface data {
+  id: string;
+  urls: {
+    id: string;
+    regular: string;
+    small: string;
+  };
+  alt_description: string;
+}
 export default function App() {
-  const [query, setQuery] = useState("");
-  const [images, setImages] = useState(null);
-  const [page, setPage] = useState(1);
-  const [errorMessage, setErrorMessage] = useState(false);
-  const [loader, setLoader] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
-  // const [modal, setModal] = useState(false);
-  const [regularSrc, setRegularSrc] = useState(null);
+  const [query, setQuery] = useState<string>("");
+  const [images, setImages] = useState<data[] | null>(null);
+  const [page, setPage] = useState<number>(1);
+  const [errorMessage, setErrorMessage] = useState<boolean>(false);
+  const [loader, setLoader] = useState<boolean>(false);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [regularSrc, setRegularSrc] = useState<string>("");
   const options = {
     per_page: 12,
     page: page,
@@ -28,7 +36,7 @@ export default function App() {
   useEffect(() => {
     if (query.length === 0) return;
 
-    const fetchPhotos = async () => {
+    const fetchPhotos = async (): Promise<void> => {
       try {
         setLoader(true);
         const { data } = await instance.get(
@@ -38,8 +46,16 @@ export default function App() {
           }
         );
 
-        const img = data.results;
-        setImages((prevImages) => [...prevImages, ...img]);
+        const img: data[] = data.results;
+        console.log(img);
+
+        setImages((prevImages) => {
+          if (prevImages === null) {
+            return [...img];
+          } else {
+            return [...prevImages, ...img];
+          }
+        });
 
         console.log(images);
       } catch (error) {
@@ -51,20 +67,20 @@ export default function App() {
     };
     fetchPhotos();
   }, [query, page]);
-  const handleSearch = (q) => {
+  const handleSearch = (q: string): void => {
     setQuery(q);
     setImages([]);
     setPage(1);
   };
-  const handleLoadMore = () => {
+  const handleLoadMore = (): void => {
     setPage(page + 1);
   };
-  const onClickOpen = (url) => {
+  const onClickOpen = (url: string): void => {
     setRegularSrc(url);
     setModalOpen(true);
     console.log(regularSrc);
   };
-  const onClose = () => {
+  const onClose = (): void => {
     setModalOpen(false);
   };
   return (

@@ -1,9 +1,17 @@
 import Modal from "react-modal";
 import css from "./ImageModal.module.css";
-
+import React from "react";
 Modal.setAppElement("#root");
-
-const ImageModal = ({ isOpen, image, onCloseModal }) => {
+interface ImageModalProps {
+  isOpen: boolean;
+  image: string;
+  onCloseModal: () => void;
+}
+const ImageModal: React.FC<ImageModalProps> = ({
+  isOpen,
+  image,
+  onCloseModal,
+}) => {
   return (
     <Modal
       overlayClassName={css.backdrop}
